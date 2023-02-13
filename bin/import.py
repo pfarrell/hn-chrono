@@ -9,10 +9,11 @@ def dbimport(df, con, table):
 
 if __name__ == '__main__':
     filepath = sys.argv[1]
-    con = sqlite3.connect("hn.db")
+    dbpath = sys.argv[2]
+    con = sqlite3.connect(dbpath)
     if filepath.endswith("parquet"):
         df = pd.read_parquet(filepath)
     elif filepath.endswith("json"):
         df = pd.read_json(filepath, lines=True)
     df['source'] = filepath
-    dbimport(df, con, "items")
+    dbimport(df, con, "item")
