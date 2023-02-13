@@ -1,0 +1,51 @@
+html {
+  margin: 0;
+}
+
+body {
+  margin-top: 0;
+  text-rendering: optimizeLegibility;
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0;
+  background-image: url("../img/gray_stripe_bg.png");
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -moz-font-feature-settings: "liga" on;
+}
+
+.content {
+
+}
+
+.container {
+  width: 42ch;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.nav {
+  height: 2em;
+  text-align: center;
+}
+
+.post {
+  padding-top: .6em;
+}
+
+#footer {
+  margin: 1em 0em 1em;
+}
+
+@media (min-width: 600px) {
+  .container { width: 66ch; margin-left: auto; margin-right: auto; }
+}
+
+@media (min-width: 1000px) {
+  .container { width: 100ch; margin-left: auto; margin-right: auto; }
+}
+

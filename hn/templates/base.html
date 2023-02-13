@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="utf-8">
+    <title>HN Chrono</title>
+    <style>
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='default.css') }}" />
+    {% endblock %}
+</head>
+<body>
+    <div class="container">
+    {% block content %}{% endblock %}
+      <div id="footer" class="center">
+          &copy;2022 by <a href="http://patf.net/">patf.net</a>.
+      </div>
+    </div>
+</body>
+</html>
