@@ -7,7 +7,7 @@
 
     function goToDate() {
       var dt = dtElem().value;
-      window.location.href=("?d=" + dt);
+      window.location.href=("/?d=" + dt);
     }
   </script>
 
@@ -17,27 +17,38 @@
       {{ title }}
 
     </h2>
+    <div>
+    {% if user %}
+    hello user
+    {% endif %}
+    </div>
   </div>
+  <div>
   <input type="button" onclick="dtElem().stepDown(); goToDate();" value="<"/>
-  <input style="display: inline-block" id="dt" type="date" value="{{ title }}" min="{{ mindt }}" max="{{ maxdt }}" required oninput="goToDate(this.value);" />
+  <input style="display: inline-block" id="dt" type="date" value="{{ date }}" min="{{ mindt }}" max="{{ maxdt }}" required oninput="goToDate(this.value);" />
   <input type="button" onclick="dtElem().stepUp(); goToDate();" value=">"/>
-  page: 
-  {% for page in range(0,pages) %}
-    <a href="?d={{ title }}&p={{ page }}">{{page}}</a>
-  {% endfor %}
+  {% if pages %}
+    page: 
+    {% for page in range(0,pages) %}
+      <a href="?d={{ title }}&p={{ page }}">{{page}}</a>
+    {% endfor %}
+  {% endif %}
+  </div>
   {% for item in items %}
     {% if item.type == 'story' %}
       <div class="post">
-        {{ item.score }} <a href="{{ item.url }}">{{ item.title }}</a> ({{ item.name}})
+        {{ item.score }} <a href="{{ item.url }}">{{ item.title }}</a> ({{ item.host }})
         <a href={{ url_for('.item', id=item.id)}}>{{ item.descendants }} comments</a>
         <a href={{ url_for('.user', by=item.by)}}>{{ item.by }}</a>
         <a href={{ url_for('.items', t=item.time) }}>{{ item.time|time2strdate }}</a>
       </div>
     {% elif item.type == 'comment' %}
-      <div class="comment {% if item.level %}level-{{ item.level }}{% endif %}">
-        <a href='https://news.ycombinator.com/item?id={{ item.id }}'>comment</a>
+      {% set level = item['level'] or 0 %}
+      <div class="comment" style="margin-left:{{ level * 20}}px">
         <p>{{ item.text|safe }}</p>
         <a href={{ url_for('.items', t=item.time) }}>{{ item.time|time2strdate }}</a>
+        <a href="/user/{{ item.by }}">{{ item.by }}</a> 
+        <a href='https://news.ycombinator.com/item?id={{ item.id }}'>src</a>
       </div>
     {% else %}
         {{ item.type }}

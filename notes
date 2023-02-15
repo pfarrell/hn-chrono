@@ -22,3 +22,7 @@ _vmve
 _zax2
 jesusfreke
 parsley
+
+
+* Number of known users who haven't made a submission in 2 years (excludes upvotes which aren't publicly known) 
+select count(1) from (select distinct user_id from item group by user_id having max(time) < (select cast(strftime('%s', datetime()) as int) - (2*365*24*3600))) as q;

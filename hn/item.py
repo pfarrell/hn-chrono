@@ -75,7 +75,7 @@ def items(limit=50, page=0):
     pages = math.ceil(total_records/limit)
 
     sql="""select q.* from (SELECT i.id, i.type, i.score, i.by, i.title, i.url, i.text, i.time, i.parent, 
-                        i.descendants, i.dead, i.deleted, i.rectified, i.source, h.name, i.captured_at 
+                        i.descendants, i.dead, i.deleted, i.rectified, i.source, h.name as host, i.captured_at 
                         from item i join host h on h.id = i.host_id where i.type='story' 
                         and dead is null and deleted is null
                         and time between :start_time and :end_time
@@ -86,32 +86,31 @@ def items(limit=50, page=0):
     print(f"{len(items)} records returned")
     prev, next = map(strdate, surrounding_dates(start_time))
     mindt, maxdt = min_max_dates()
-    return render_template('items.html', items=items, title=strdate(to_date(start_time)), next=next, prev=prev, mindt=mindt, maxdt=maxdt, pages=pages)
+    return render_template('items.html', items=items, title=strdate(to_date(start_time)), 
+                           date=strdate(to_date(start_time)),next=next, prev=prev, mindt=mindt, 
+                           maxdt=maxdt, pages=pages)
 
 
 @bp.route('item/<id>', methods=(['GET']))
 def item(id):
     db = get_db()
-    sql="""SELECT i.id, i.type, i.score, i.by, i.title, i.url, i.text, i.time, i.parent, i.descendants, 
-                        i.dead, i.deleted, i.rectified, i.source, h.name, i.captured_at, i.user_id 
-                        from item i join host h on h.id = i.host_id where i.id=:id"""
-
     sql="""WITH RECURSIVE discussion(id, type, score, by, title, url, text, time, parent, descendants, dead, 
-                                    deleted, rectified, source, level) AS (
+                                    deleted, rectified, source, level, host) AS (
             select i.id, i.type, i.score, i.by, i.title, i.url, i.text, i.time, i.parent, i.descendants, i.dead, 
-                    i.deleted, i.rectified, i.source, 0 as level 
+                    i.deleted, i.rectified, i.source, 0 as level, h.name as host 
             from item i 
-            where id = :id 
+            left join host h on h.id = i.host_id
+            where i.id = :id 
             UNION ALL 
             SELECT  i.id, i.type, i.score, i.by, i.title, i.url, i.text, i.time, i.parent, i.descendants, i.dead, 
-                    i.deleted, i.rectified, i.source, d.level+1 as level 
+                    i.deleted, i.rectified, i.source, d.level+1 as level, NULL as host 
             from item i 
             join discussion d on d.id = i.parent 
             order by level DESC, i.score DESC) 
             select * from discussion"""
     print(sql)
     items=db.execute(sql, {'id': id}).fetchall()
-    return render_template('items.html', items=items, title=items[0]['title'])
+    return render_template('items.html', items=items, title=items[0]['title'], date=strdate(to_date(items[0]['time'])),)
 
 
 @bp.route('user/<by>', methods=(['GET']))
@@ -122,4 +121,6 @@ def user(by):
                         from item i left join host h on h.id = i.host_id where by=:by order by time desc limit :limit"""
     print(sql)
     items=db.execute(sql, {'by': by, 'limit': 1000}).fetchall()
-    return render_template('items.html', items=items, title=f"{by} posts")
+    sql="""SELECT id, name, created, karma, delay, about from user where name=:name"""
+    user=db.execute(sql, {'name': by}).fetchall()
+    return render_template('items.html', items=items, title=f"{by} posts", user=user[0])
