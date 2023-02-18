@@ -18,15 +18,14 @@
 
     </h2>
     <div>
-    {% if user %}
-    hello user
-    {% endif %}
     </div>
   </div>
   <div>
-  <input type="button" onclick="dtElem().stepDown(); goToDate();" value="<"/>
-  <input style="display: inline-block" id="dt" type="date" value="{{ date }}" min="{{ mindt }}" max="{{ maxdt }}" required oninput="goToDate(this.value);" />
-  <input type="button" onclick="dtElem().stepUp(); goToDate();" value=">"/>
+  {% if not user %}
+    <input type="button" onclick="dtElem().stepDown(); goToDate();" value="<"/>
+    <input style="display: inline-block" id="dt" type="date" value="{{ date }}" min="{{ mindt }}" max="{{ maxdt }}" required oninput="goToDate(this.value);" />
+    <input type="button" onclick="dtElem().stepUp(); goToDate();" value=">"/>
+  {% endif %}
   {% if pages %}
     page: 
     {% for page in range(0,pages) %}

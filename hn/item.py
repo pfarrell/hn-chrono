@@ -114,13 +114,26 @@ def item(id):
 
 
 @bp.route('user/<by>', methods=(['GET']))
-def user(by):
+def user(by, limit=50, page=0):
+    if page == 0:
+        page=request.args.get('p', 0)
     db = get_db()
+    total_records = records_size_cache.get(by)
+    offset = int(page) * limit
+    data = {'name': by, 'by': by, 'limit': limit, 'offset': offset}
+    if not total_records:
+        sql="""SELECT count(1) from item i left join host h on h.id = i.host_id where by=:by"""
+        print(sql)
+        print(data)
+        total_records = db.execute(sql, data).fetchall()[0][0]
+        records_size_cache[by] = total_records
+    pages = math.ceil(total_records/limit)
     sql="""SELECT i.id, i.type, i.score, i.by, i.title, i.url, i.text, i.time, i.parent, i.descendants, 
                         i.dead, i.deleted, i.rectified, i.source, h.name, i.captured_at, i.user_id 
-                        from item i left join host h on h.id = i.host_id where by=:by order by time desc limit :limit"""
+                        from item i left join host h on h.id = i.host_id where by=:by order by time desc limit :limit offset :offset"""
     print(sql)
-    items=db.execute(sql, {'by': by, 'limit': 1000}).fetchall()
-    sql="""SELECT id, name, created, karma, delay, about from user where name=:name"""
-    user=db.execute(sql, {'name': by}).fetchall()
-    return render_template('items.html', items=items, title=f"{by} posts", user=user[0])
+    items=db.execute(sql, data).fetchall()
+    sql="""SELECT id, name, created, karma, delay, about from user where name=:by"""
+    user=db.execute(sql, data).fetchall()
+    print(sql)
+    return render_template('items.html', items=items, title=f"{by} posts", user=user[0], pages=pages)
