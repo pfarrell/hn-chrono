@@ -19,6 +19,10 @@ def to_date(time):
     return datetime.utcfromtimestamp(int(time))    
 
 
+def to_date_str(time):
+    return str(to_date(time).date())
+
+
 def strdate(date):
     return date.strftime('%Y-%m-%d')
 
@@ -86,8 +90,8 @@ def items(limit=50, page=0):
     print(f"{len(items)} records returned")
     prev, next = map(strdate, surrounding_dates(start_time))
     mindt, maxdt = min_max_dates()
-    return render_template('items.html', items=items, title=strdate(to_date(start_time)), 
-                           date=strdate(to_date(start_time)),next=next, prev=prev, mindt=mindt, 
+    return render_template('items.html', type="list", items=items, title=strdate(to_date(start_time)), 
+                           date=strdate(to_date(start_time)), datestr=strdate(to_date(start_time)), next=next, prev=prev, mindt=mindt, 
                            maxdt=maxdt, pages=pages)
 
 
@@ -110,7 +114,7 @@ def item(id):
             select * from discussion"""
     print(sql)
     items=db.execute(sql, {'id': id}).fetchall()
-    return render_template('items.html', items=items, title=items[0]['title'], date=strdate(to_date(items[0]['time'])),)
+    return render_template('items.html', items=items, title=items[0]['title'], type="item", date=strdate(to_date(items[0]['time'])),)
 
 
 @bp.route('user/<by>', methods=(['GET']))
@@ -136,4 +140,4 @@ def user(by, limit=50, page=0):
     sql="""SELECT id, name, created, karma, delay, about from user where name=:by"""
     user=db.execute(sql, data).fetchall()
     print(sql)
-    return render_template('items.html', items=items, title=f"{by} posts", user=user[0], pages=pages)
+    return render_template('items.html', type="user", items=items, title=f"{by} posts", user=user[0], pages=pages)

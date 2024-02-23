@@ -21,10 +21,12 @@
     </div>
   </div>
   <div>
-  {% if not user %}
+  {% if type=="list" %}
     <input type="button" onclick="dtElem().stepDown(); goToDate();" value="<"/>
-    <input style="display: inline-block" id="dt" type="date" value="{{ date }}" min="{{ mindt }}" max="{{ maxdt }}" required oninput="goToDate(this.value);" />
+    <input style="display: inline-block" id="dt" type="date" value="{{ datestr }}" min="{{ mindt }}" max="{{ maxdt }}" required oninput="goToDate(this.value);" />
     <input type="button" onclick="dtElem().stepUp(); goToDate();" value=">"/>
+  {% elif type=="item" %}
+    <a href="{{ url_for('.items', d=date) }}" style="display: inline-block" id="dt">{{ date }}</a>
   {% endif %}
   {% if pages %}
     page: 
@@ -39,18 +41,19 @@
         {{ item.score }} <a href="{{ item.url }}">{{ item.title }}</a> ({{ item.host }})
         <a href={{ url_for('.item', id=item.id)}}>{{ item.descendants }} comments</a>
         <a href={{ url_for('.user', by=item.by)}}>{{ item.by }}</a>
-        <a href={{ url_for('.items', t=item.time) }}>{{ item.time|time2strdate }}</a>
       </div>
+      {% if type=='item' %}<hr/>{% endif %}
+      
     {% elif item.type == 'comment' %}
       {% set level = item['level'] or 0 %}
       <div class="comment" style="margin-left:{{ level * 20}}px">
         <p>{{ item.text|safe }}</p>
-        <a href={{ url_for('.items', t=item.time) }}>{{ item.time|time2strdate }}</a>
+        <a href={{ url_for('.items', d=date) }}>{{ item.time|time2strdate }}</a>
         <a href="/user/{{ item.by }}">{{ item.by }}</a> 
         <a href='https://news.ycombinator.com/item?id={{ item.id }}'>src</a>
       </div>
     {% else %}
-        {{ item.type }}
+      {{ item.type }}
     {% endif %}
   {% endfor %}
 {% endblock %}

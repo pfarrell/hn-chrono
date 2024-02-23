@@ -92,28 +92,11 @@ def upsert_item(conn, id, json, capture_time):
 
 
 if __name__ == '__main__':
-    if(len(sys.argv) < 2):
-        print(f"usage: python bin/rectify.py [yyyy-mm-dd] ([all])")
-        sys.exit(1)   
-    mode = "stories" if len(sys.argv) == 2 else sys.argv[2]
-    minDate, maxDate = get_dates(sys.argv[1])
     dbfile = 'instance/hn.db'
     conn = get_db(dbfile)
-    minId = get_min_id(conn, minDate, mode)
-    maxId = get_max_id(conn, maxDate, mode)
-    if((mode == "stories" or mode == "unprocessed") and maxId <= minId):
-        print(f"already completed {sys.argv[1]}")
-        sys.exit(0)
-    updates = maxId - minId
-    print(f"{datetime.now()}: updating {updates} records")
-    updated=0
-    stories=0
-    for id in range(minId, maxId):
-        updated+=1
+    #for id in map(str.strip, sys.stdin):
+    for id in range(37279413, 37284576):
         retrieval_time=int(time.time())
-        if mode=='all' or is_story(conn, id):
-            stories+=1
-            fbdata = retrieve_from_firebase(id)
-            upsert_item(conn, id, fbdata, retrieval_time)
-        if (updated) % 250 == 0:
-            print(f"{datetime.now()}: {stories} stories updated, {updated} of {updates}"), 
+        fbdata = retrieve_from_firebase(id)
+        upsert_item(conn, id, fbdata, retrieval_time)
+        print(f"{datetime.now()}: updated id {id}"), 

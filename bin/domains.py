@@ -65,7 +65,6 @@ if __name__ == '__main__':
     conn = get_db(dbfile)
     warm_cache(conn)
     print("start: " + str(datetime.now()))
-    import ipdb
     for i in range(0, 1000):
         rows =  get_unprocessed_hosts(conn)
         if len(rows) == 0:
