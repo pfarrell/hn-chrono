@@ -34,7 +34,8 @@ def get_min_id(conn, dt, mode):
 
     cur.execute(sql, data)
     rows = cur.fetchall()
-    return rows[0][0]
+    if rows and rows[0] and rows[0][0]:
+        return rows[0][0]
 
 
 def get_max_id(conn, dt, mode):
@@ -46,7 +47,9 @@ def get_max_id(conn, dt, mode):
         sql = "SELECT id from item where time < :date order by time desc limit 1"
     cur.execute(sql, data)
     rows = cur.fetchall()
-    return rows[0][0]
+    if rows and rows[0] and rows[0][0]:
+        return rows[0][0]
+
 
 def retrieve_from_firebase(id):
     url = f"https://hacker-news.firebaseio.com/v0/item/{id}.json"
@@ -101,8 +104,8 @@ if __name__ == '__main__':
     conn = get_db(dbfile)
     minId = get_min_id(conn, minDate, mode)
     maxId = get_max_id(conn, maxDate, mode)
-    if((mode == "stories" or mode == "unprocessed") and maxId <= minId):
-        print(f"already completed {sys.argv[1]}")
+    if((maxId is None or minId is None) or (mode == "stories" or mode == "unprocessed") and maxId <= minId ):
+        print(f"no work for {sys.argv[1]}")
         sys.exit(0)
     updates = maxId - minId
     print(f"{datetime.now()}: updating {updates} records")
