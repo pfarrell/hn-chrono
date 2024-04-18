@@ -111,6 +111,7 @@ if __name__ == '__main__':
     print(f"{datetime.now()}: updating {updates} records")
     updated=0
     stories=0
+    print(f"rectifying all items for {sys.argv[1]}")
     for id in range(minId, maxId):
         updated+=1
         retrieval_time=int(time.time())
