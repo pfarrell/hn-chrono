@@ -8,7 +8,12 @@
         <style>
             body {
                 font-family: arial;
+            }
+            h1 {
                 text-align: center;
+            }
+            p {
+                max-width: 50%;
             }
             table {
                 border-collapse: collapse;
@@ -32,7 +37,80 @@
     </head>
     <body>
         <h1>Hacker News Data Files</h1>
-        <div>This a data dump of content from <a href="https://news.ycombinator.com">Hacker News</a>. See <a href="https://github.com/pfarrell/hn-chrono">this project</a> for more informatiothis project</a> for more information.</div>
+        <p class="center">This a data dump of content from <a href="https://news.ycombinator.com">Hacker News</a>. See <a href="https://github.com/pfarrell/hn-chrono">this project</a> for more information on how the data was obtained.</p>
+        <p class="center">
+            Files are gzipped csv files with a header in each file.  Rows in the csv are refer to "items".  Hacker News uses (or at least publishes) their data using <a href="https://en.wikipedia.org/wiki/Single_Table_Inheritance">single table inheritance</a> as ids are unique across different item types (e.g. comments and stories) and arbitraty parent-child relationships between stories or comments and comments use those ids. 
+        </p>
+        <p>
+            <table class="center">
+            <tr>
+                <th>name</th>
+                <th>data type</th>
+                <th>notes</th>
+            </tr>    
+            <tr>
+                <td>id</td>
+                <td>integer </td>
+                <td>unique id for the item</td>
+            </tr>
+            <tr>
+                <td>type</td>
+                <td>type of item</td>
+                <td>type of item, values include  story, comment, job, poll, pollopt</td>
+            </tr>
+            <tr>
+                <td>score</td>
+                <td>integer</td>
+                <td>points for a story (comment points are not publicly available)</td>
+            </tr>
+            <tr>
+                <td>by</td>
+                <td>string</td>
+                <td>username of author</td>
+            </tr>
+            <tr>
+                <td>title</td>
+                <td>string</td>
+                <td>title of submission, null if type is not story</td>
+            </tr>
+            <tr>
+                <td>url</td>
+                <td>string</td>
+                <td>link for stories, null if type is not story</td>
+            </tr>
+            <tr>
+                <td>text</td>
+                <td>string</td>
+                <td>comment text, generally null if type is story</td>
+            </tr>
+            <tr>
+                <td>time</td>
+                <td>int</td>
+                <td>unix epoch time of publishing</td>
+            </tr>
+            <tr>
+                <td>parent</td>
+                <td>int</td>
+                <td>parent item.  Null if type is story</td>
+            </tr>
+            <tr>
+                <td>descendants</td>
+                <td>int</td>
+                <td>number of item children</td>
+            </tr>
+            <tr>
+                <td>dead</td>
+                <td>boolean</td>
+                <td>1 means comment was flagged and marked dead</td>
+            </tr>
+            <tr>
+                <td>deleted</td>
+                <td>boolean</td>
+                <td>1 means item was deleted</td>
+            </tr> 
+        </table>
+        </p>
+        
         <table class="center">
             <tr>
                 <th>Filename</th>
@@ -44,18 +122,18 @@
     
             <tr>
                 <td><a href="https://patf.com/hn-data/2024/2024-05.csv.gz">2024-05.csv.gz</a></td>
-                <td>22c6fd7758dcbdd1b8f4b8f89a72670d</td>
+                <td>818b9fe4cfbb6e58901ae234f336603d</td>
                 <td>3929675</td>
                 <td>30389</td>
-                <td>May 03 2024 14:17</td>
+                <td>May 03 2024 21:34</td>
             </tr>
         
             <tr>
                 <td><a href="https://patf.com/hn-data/2024/2024-04.csv.gz">2024-04.csv.gz</a></td>
-                <td>aa286888cdf716f4f79b561a06991869</td>
+                <td>ca009dbd433a07a3fdc22c22969acc92</td>
                 <td>47930642</td>
                 <td>363913</td>
-                <td>May 03 2024 14:17</td>
+                <td>May 03 2024 21:34</td>
             </tr>
         
             <tr>
