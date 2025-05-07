@@ -17,8 +17,12 @@ for id in $(seq $dbid $fbid); do
   if [ $(expr $id % 100) == "0" ]; then
         echo "$id"
   fi
-  curl -s https://hacker-news.firebaseio.com/v0/item/$id.json >> $date.json
-  echo >> $date.json
+
+  result=$(curl -s https://hacker-news.firebaseio.com/v0/item/$id.json)
+  if [ "$result" != "null" ]; then
+    echo "$result" >> $date.json
+    echo >> $date.json
+  fi
 done
 echo "importing $(<$date.json wc -l) records into db"
 python ./bin/import.py $date.json $dbfile
